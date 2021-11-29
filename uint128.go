@@ -415,3 +415,27 @@ func FromBig(i *big.Int) (u Uint128) {
 	u.Hi = new(big.Int).Rsh(i, 64).Uint64()
 	return u
 }
+
+func (u Uint128) GetBit(bit uint8) bool {
+	if bit >= 64 {
+		return u.Hi&(1<<(bit-64)) > 0
+	}
+
+	return u.Lo&(1<<bit) > 0
+}
+
+func (u Uint128) SetBit(bit uint8) (r Uint128) {
+	if bit >= 64 {
+		return New(u.Lo, u.Hi|1<<(bit-64))
+	}
+
+	return New(u.Lo|1<<bit, u.Hi)
+}
+
+func (u Uint128) ClearBit(bit uint8) (r Uint128) {
+	if bit >= 64 {
+		return New(u.Lo, u.Hi&^(1<<(bit-64)))
+	}
+
+	return New(u.Lo&^(1<<bit), u.Hi)
+}
